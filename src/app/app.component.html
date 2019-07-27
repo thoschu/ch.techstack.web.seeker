@@ -1,0 +1,48 @@
+<header>
+  <h1 class="tracking-in-expand">
+    Welcome to {{ title }}!
+  </h1>
+  <img width="300" alt="Logo" src="../assets/seek.gif">
+</header>
+<br>
+<main>
+  <select #skind>
+    <option value="images">Images</option>
+    <option value="gifs">Gifs</option>
+    <option disabled value="videos">Videos</option>
+  </select>
+  <br><br>
+  <input type="text" name="search" placeholder="Search:" autocomplete="off" [(ngModel)]="searchString" (ngModelChange)="inputChanged($event)">
+  <button #cleanBtn (click)="searchString = cleanInput(searchString)">Clear...</button>
+</main>
+<br>
+<footer class="flex-container">
+  <div class="flex-item" *ngFor="let result of results$ | async">
+    <div *ngIf="selection == 'images' && result.data.thumbnail != 'default' && result.data.thumbnail != 'self'">
+      <a [href]="result.data.url" target="_blank">
+        <img [src]="result.data.thumbnail" alt="">
+      </a>
+    </div>
+    <div *ngIf="selection == 'gifs'">
+      <!--<a [href]="result.embed_url" target="_blank">-->
+        <!--<img [src]="result.images.original.url" alt="" (click)="copySrc($event)">-->
+      <!--</a>-->
+      <img [src]="result.images.original.url" [alt]="result.embed_url" (click)="copySrc($event)">
+    </div>
+  </div>
+  <div *ngIf="(results$ | async)?.length == 0">
+    <h2>No records found!</h2>
+    <canvas id="qrcanvas">{{getQr()}}</canvas>
+  </div>
+</footer>
+<aside id="modal1" class="overlay">
+  <a class="cancel" [href]="'#'"></a>
+  <div class="modal">
+    <h2>Copied:</h2>
+    <p>{{copiedText}}</p>
+    <hr>
+    <div class="content">
+      <p>Click outside to close.</p>
+    </div>
+  </div>
+</aside>
